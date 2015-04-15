@@ -16,6 +16,6 @@
             Tab Name
             </a></li
           ></tal:tabs
-        ><li class="plain"><a title="" href="@@mypage">MyPage</a></li>
+        ><li tal:condition="not:context/@@isAnonymous" class="plain" i18n:domain="ntpu.view"><a title="" href="@@mypage" i18n:translate="">MyPage</a></li>
     </ul>
 </tal:sections>
