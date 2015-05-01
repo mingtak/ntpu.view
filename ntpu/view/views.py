@@ -26,12 +26,23 @@ class ToLanguageHome(grok.View):
         return
 
 
+class GetCurrentUseId(grok.View):
+    grok.context(Interface)
+    grok.name('getCurrentUserId')
+
+    def render(self):
+        if api.user.is_anonymous():
+            return None
+        return api.user.get_current().getId()
+
+
 class IsAnonymous(grok.View):
     grok.context(Interface)
     grok.name('isAnonymous')
 
     def render(self):
         return api.user.is_anonymous()
+
 
 class MyPage(grok.View):
     grok.context(Interface)
@@ -43,7 +54,7 @@ class MyPage(grok.View):
         response = self.response
         currentUser = api.user.get_current()
         if (not api.user.is_anonymous()) and ('Member' in api.user.get_roles()):
-            profile = catalog({'Type':'Profile', 'id':currentUser.getId()})[0]
+            profile = catalog({'Type':'Profile', 'Creator':currentUser.getId()})[0]
             response.redirect(profile.getURL())
         else:
             response.redirect(context.absolute_url())
@@ -64,3 +75,29 @@ class CurrentLanguage(grok.View):
         self.current_language = portal_state.language()
 
         return self.current_language
+
+
+class GetContentType(grok.View):
+    grok.context(Interface)
+    grok.name('get_contenttype')
+
+    def render(self):
+        return self.context.Type()
+
+
+class IsOwner(grok.View):
+    grok.context(Interface)
+    grok.name('is_owner')
+
+    def render(self):
+        ownerId = self.context.owner_info()['id']
+        currentUserId = api.user.get_current().getId()
+        return ownerId == currentUserId
+
+
+class GetRoles(grok.View):
+    grok.context(Interface)
+    grok.name('get_roles')
+
+    def render(self):
+        return api.user.get_roles()
