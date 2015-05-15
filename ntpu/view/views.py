@@ -100,4 +100,6 @@ class GetRoles(grok.View):
     grok.name('get_roles')
 
     def render(self):
+        if api.user.is_anonymous():
+            return []
         return api.user.get_roles()
